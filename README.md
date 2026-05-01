@@ -1,4 +1,7 @@
-# SMART LINEAR REGRESSION 🔴💻
+<div align="center">
+  <img src="www/beta_regression_icon.svg" width="150" alt="Beta Regression Icon">
+  <h1>SMART LINEAR REGRESSION 🔴💻</h1>
+</div>
 
 ![Smart Linear Regression Banner](www/hero_banner.png)
 
