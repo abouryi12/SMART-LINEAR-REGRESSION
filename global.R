@@ -18,14 +18,14 @@ theme_premium <- function() {
       panel.grid.major = element_line(color = "#ff1a1a20", linewidth = 0.3),
       panel.grid.minor = element_blank(),
       text = element_text(color = "#ffffff"),
-      axis.text = element_text(color = "#ffcccc", size = 10),
-      axis.title = element_text(color = "#ffcccc", size = 11, face = "bold"),
-      plot.title = element_text(color = "#ffffff", size = 14, face = "bold", margin = margin(b = 8)),
-      plot.subtitle = element_text(color = "#ff9999", size = 10, margin = margin(b = 12)),
+      axis.text = element_text(color = "#ffcccc", size = 13),
+      axis.title = element_text(color = "#ffcccc", size = 15, face = "bold"),
+      plot.title = element_text(color = "#ffffff", size = 20, face = "bold", margin = margin(b = 10)),
+      plot.subtitle = element_text(color = "#ff9999", size = 14, margin = margin(b = 14)),
       legend.background = element_rect(fill = "#080808", color = NA),
-      legend.text = element_text(color = "#ffcccc", size = 9),
-      legend.title = element_text(color = "#ffffff", size = 10),
-      plot.margin = margin(16, 16, 16, 16)
+      legend.text = element_text(color = "#ffcccc", size = 12),
+      legend.title = element_text(color = "#ffffff", size = 14),
+      plot.margin = margin(20, 20, 20, 20)
     )
 }
 

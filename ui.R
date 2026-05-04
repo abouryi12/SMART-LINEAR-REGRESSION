@@ -32,7 +32,7 @@ ui <- fluidPage(
           column(4,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-blue", "IN"), "Data Source"
+                tags$span(class = "icon icon-blue", "DS"), "Data Source"
               ),
               radioButtons("data_source", "How do you want to load data?",
                 choices = c("Upload CSV" = "csv", "Manual Entry" = "manual"),
@@ -49,7 +49,7 @@ ui <- fluidPage(
                   ),
                   tags$div(class = "dropzone-hint",
                     tags$span(style = "font-size:28px;", "\U0001F4C2"),
-                    tags$span("Click here or Drag & Drop your CSV file")
+                    tags$span(style = "font-size:18px;font-weight:700;", "Click here or Drag & Drop your CSV file")
                   )
                 ),
                 checkboxInput("header", "First row is header", TRUE),
@@ -83,7 +83,7 @@ ui <- fluidPage(
           column(8,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-green", "DT"), "Dataset Preview"
+                tags$span(class = "icon icon-green", "DP"), "Dataset Preview"
               ),
               uiOutput("data_info_badges"),
               tags$br(),
@@ -100,13 +100,13 @@ ui <- fluidPage(
           column(4,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-blue", "XY"), "Variable Selection"
+                tags$span(class = "icon icon-blue", "CV"), "Choose Your Variables"
               ),
               uiOutput("y_var_ui"),
               uiOutput("x_vars_ui"),
               hr(),
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-cyan", "LM"), "Model Type"
+                tags$span(class = "icon icon-cyan", "MT"), "Detected Model Type"
               ),
               uiOutput("model_type_display"),
               hr(),
@@ -117,7 +117,7 @@ ui <- fluidPage(
             ),
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-green", "VI"), "Variable Info"
+                tags$span(class = "icon icon-green", "DI"), "Data Statistics"
               ),
               uiOutput("var_info_panel")
             )
@@ -125,19 +125,19 @@ ui <- fluidPage(
           column(8,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-purple", "FX"), "Model Formula"
+                tags$span(class = "icon icon-purple", "RE"), "Regression Equation"
               ),
               verbatimTextOutput("formula_display")
             ),
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-orange", "CT"), "Coefficient Table"
+                tags$span(class = "icon icon-orange", "CT"), "Model Coefficients"
               ),
               uiOutput("coef_table_ui")
             ),
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-blue", "SM"), "Model Summary"
+                tags$span(class = "icon icon-blue", "MS"), "Model Summary"
               ),
               verbatimTextOutput("model_summary")
             )
@@ -159,7 +159,7 @@ ui <- fluidPage(
           column(12,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-blue", "TT"), "T-Test: Coefficient Significance"
+                tags$span(class = "icon icon-blue", "PV"), "Statistical Significance (P-Values)"
               ),
               uiOutput("ttest_table_ui")
             )
@@ -169,7 +169,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-purple", "CI"), "Coefficient Importance"
+                tags$span(class = "icon icon-blue", "VI"), "Which Variable is Most Important?"
               ),
               plotOutput("coef_importance_plot", height = "350px")
             )
@@ -177,7 +177,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-cyan", "QQ"), "Q-Q Plot (Normality Check)"
+                tags$span(class = "icon icon-green", "QQ"), "Q-Q Plot (Are Errors Normal?)"
               ),
               plotOutput("qq_plot", height = "350px")
             )
@@ -192,7 +192,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-blue", "SC"), "Scatter Plot with Regression Line"
+                tags$span(class = "icon icon-orange", "DT"), "Scatter Plot (Data Trend)"
               ),
               plotOutput("scatter_plot", height = "400px")
             )
@@ -200,7 +200,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-green", "AP"), "Actual vs Predicted"
+                tags$span(class = "icon icon-green", "MA"), "Actual vs Predicted (Model Accuracy)"
               ),
               plotOutput("actual_vs_pred", height = "400px")
             )
@@ -211,7 +211,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-purple", "RF"), "Residuals vs Fitted"
+                tags$span(class = "icon icon-orange", "LC"), "Residuals vs Fitted (Linearity Check)"
               ),
               plotOutput("residual_plot", height = "400px")
             )
@@ -219,7 +219,7 @@ ui <- fluidPage(
           column(6,
             tags$div(class = "plot-container",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-orange", "RD"), "Residual Distribution"
+                tags$span(class = "icon icon-blue", "BC"), "Error Distribution (Bell Curve Check)"
               ),
               plotOutput("residual_hist", height = "400px")
             )
@@ -234,11 +234,9 @@ ui <- fluidPage(
           column(8,
             tags$div(class = "card",
               tags$div(class = "card-title",
-                tags$span(class = "icon icon-purple", "AI"), "Intelligent Analysis Report"
+                tags$span(class = "icon icon-purple", "AI"), "Smart AI Insights Report"
               ),
-              tags$p(style = "color:#ffffff;font-size:14px;font-weight:600;margin-bottom:20px;background:rgba(255,26,26,0.1);padding:10px;border-radius:4px;border-left:3px solid #ff1a1a;",
-                "Auto-generated insights based on your trained model. Train a model first to see results."
-              ),
+
               uiOutput("insights_panel")
             )
           ),

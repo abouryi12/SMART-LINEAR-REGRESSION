@@ -62,3 +62,50 @@ $(document).ready(function(){
 var style = document.createElement('style');
 style.textContent = '@keyframes ripple{to{transform:scale(2.5);opacity:0}}';
 document.head.appendChild(style);
+
+// --- Custom Drag and Drop Logic ---
+$(document).ready(function() {
+  var dropzone = $('.custom-dropzone');
+  
+  dropzone.on('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css({
+      'border-color': '#cfa85f',
+      'background': 'rgba(207,168,95,0.1)',
+      'transform': 'scale(1.02)'
+    });
+  });
+  
+  dropzone.on('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css({
+      'border-color': '',
+      'background': '',
+      'transform': 'scale(1)'
+    });
+  });
+  
+  dropzone.on('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css({
+      'border-color': '',
+      'background': '',
+      'transform': 'scale(1)'
+    });
+    
+    var files = e.originalEvent.dataTransfer.files;
+    if(files.length > 0) {
+      // Find the hidden shiny file input
+      var fileInput = document.querySelector('.custom-dropzone input[type="file"]');
+      if (fileInput) {
+        fileInput.files = files;
+        // Trigger Shiny change event
+        $(fileInput).trigger('change');
+      }
+    }
+  });
+});
+

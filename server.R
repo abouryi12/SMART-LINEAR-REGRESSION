@@ -72,17 +72,19 @@ server <- function(input, output, session) {
   output$data_info_badges <- renderUI({
     req(rv$data); df <- rv$data
     num_vars <- sum(sapply(df, is.numeric))
-    tags$div(style = "display:flex;gap:10px;flex-wrap:wrap;",
-      tags$span(class = "badge-status badge-success", paste(nrow(df), "rows")),
-      tags$span(class = "badge-status badge-success", paste(ncol(df), "columns")),
-      tags$span(class = "badge-status badge-warning", paste(num_vars, "numeric")))
+    badge_style <- "font-size:16px;font-weight:800;padding:10px 18px;letter-spacing:1px"
+    tags$div(style = "display:flex;gap:12px;flex-wrap:wrap;",
+      tags$span(class = "badge-status badge-success", style = badge_style, paste(nrow(df), "rows")),
+      tags$span(class = "badge-status badge-success", style = badge_style, paste(ncol(df), "columns")),
+      tags$span(class = "badge-status badge-warning", style = badge_style, paste(num_vars, "numeric")))
   })
 
   output$data_table <- DT::renderDataTable({
     req(rv$data)
     DT::datatable(rv$data,
       selection = "none",
-      options = list(pageLength = 10, scrollX = TRUE, dom = 'lfrtip',
+      options = list(pageLength = 10, scrollX = FALSE, dom = 'lfrtip',
+        columnDefs = list(list(className = 'dt-center', targets = "_all")),
         language = list(search = "Search:")),
       rownames = FALSE, class = "compact")
   })
@@ -93,7 +95,9 @@ server <- function(input, output, session) {
 
   output$y_var_ui <- renderUI({
     req(numeric_cols())
-    selectInput("y_var", "Response Variable (Y)", choices = numeric_cols(), selected = numeric_cols()[1])
+    cols <- numeric_cols()
+    default_y <- if ("Y" %in% cols) "Y" else if ("y" %in% cols) "y" else cols[1]
+    selectInput("y_var", "Response Variable (Y)", choices = cols, selected = default_y)
   })
 
   output$x_vars_ui <- renderUI({
@@ -108,18 +112,18 @@ server <- function(input, output, session) {
     type_badge <- if (n_x <= 1) "badge-success" else "badge-warning"
     tags$div(
       tags$span(class = paste("badge-status", type_badge), 
-        style = "font-size:14px;font-weight:700;padding:8px 16px;", type_text))
+        style = "font-size:16px;font-weight:800;padding:12px 20px;letter-spacing:1px;", type_text))
   })
 
   output$var_info_panel <- renderUI({
     req(rv$data, input$y_var, input$x_vars)
     y_data <- rv$data[[input$y_var]]
-    y_html <- tags$p(style = "color:#a0aabf;font-size:12px;margin-bottom:6px;",
+    y_html <- tags$p(style = "color:#ffffff;font-size:16px;font-weight:600;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,26,26,0.2);",
       sprintf("Y: %s | Mean: %.2f", input$y_var, mean(y_data, na.rm=T)))
     
     x_htmls <- lapply(input$x_vars, function(x) {
       x_data <- rv$data[[x]]
-      tags$p(style = "color:#a0aabf;font-size:12px;margin-bottom:4px;",
+      tags$p(style = "color:#ffffff;font-size:16px;font-weight:600;margin-bottom:8px;",
         sprintf("X: %s | Mean: %.2f", x, mean(x_data, na.rm=T)))
     })
     
@@ -200,9 +204,9 @@ server <- function(input, output, session) {
 
   output$actual_vs_pred <- renderPlot({
     req(rv$model)
-    actual <- rv$data[[input$y_var]]; predicted <- predict(rv$model)
+    predicted <- fitted(rv$model); actual <- predicted + residuals(rv$model)
     plot_df <- data.frame(Actual = actual, Predicted = predicted)
-    rng <- range(c(actual, predicted))
+    rng <- range(c(actual, predicted), na.rm = TRUE)
     ggplot(plot_df, aes(x = Actual, y = Predicted)) +
       geom_point(color = "#ffffff", alpha = 0.8, size = 3) +
       geom_abline(slope = 1, intercept = 0, color = "#ff4040", linewidth = 1, linetype = "dashed") +
@@ -237,7 +241,7 @@ server <- function(input, output, session) {
   output$metric_r2 <- renderUI({
     req(rv$model_summary); r2 <- rv$model_summary$r.squared
     quality <- if(r2 >= 0.8) "Excellent" else if(r2 >= 0.6) "Good" else if(r2 >= 0.3) "Fair" else "Poor"
-    metric_card_html("R\u00b2 (Goodness of Fit)", sprintf("%.4f", r2), quality, "val-blue")
+    metric_card_html("R\u00b2", sprintf("%.4f", r2), quality, "val-blue")
   })
 
   output$metric_adjr2 <- renderUI({
@@ -317,37 +321,37 @@ server <- function(input, output, session) {
       tags$div(style = paste0("width:120px;height:120px;border-radius:50%;margin:0 auto 16px;",
         "display:flex;align-items:center;justify-content:center;flex-direction:column;",
         "border:4px solid ", color, ";box-shadow:0 0 25px ", color, "44;"),
-        tags$div(style = paste0("font-size:32px;font-weight:800;color:", color,
+        tags$div(style = paste0("font-size:40px;font-weight:800;color:", color,
           ";font-family:'JetBrains Mono',monospace;text-shadow:0 0 15px ", color, "66"), score),
-        tags$div(style = "font-size:10px;color:#5c6b8a;text-transform:uppercase;letter-spacing:1px", "/ 100")),
-      tags$div(style = paste0("font-size:14px;font-weight:600;color:", color), label))
+        tags$div(style = "font-size:14px;font-weight:700;color:#5c6b8a;text-transform:uppercase;letter-spacing:1px", "/ 100")),
+      tags$div(style = paste0("font-size:18px;font-weight:700;margin-top:8px;color:", color), label))
   })
 
   output$quick_summary_ui <- renderUI({
     req(rv$model_summary, rv$trained); s <- rv$model_summary
     n_sig <- sum(s$coefficients[-1, 4] < 0.05); n_total <- nrow(s$coefficients) - 1
-    row_style <- "display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,0,60,.15)"
+    row_style <- "display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,0,60,.15)"
     tags$div(
       tags$div(style = row_style,
-        tags$span(style = "color:#ffffff;font-size:14px;font-weight:500", "Observations"),
-        tags$span(style = "color:#ffffff;font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace", nrow(rv$data))),
+        tags$span(style = "color:#ffffff;font-size:16px;font-weight:600", "Observations"),
+        tags$span(style = "color:#ffffff;font-weight:800;font-size:18px;font-family:'JetBrains Mono',monospace", nrow(rv$data))),
       tags$div(style = row_style,
-        tags$span(style = "color:#ffffff;font-size:14px;font-weight:500", "Predictors"),
-        tags$span(style = "color:#ffffff;font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace", n_total)),
+        tags$span(style = "color:#ffffff;font-size:16px;font-weight:600", "Predictors"),
+        tags$span(style = "color:#ffffff;font-weight:800;font-size:18px;font-family:'JetBrains Mono',monospace", n_total)),
       tags$div(style = row_style,
-        tags$span(style = "color:#ffffff;font-size:14px;font-weight:500", "Significant (p<0.05)"),
-        tags$span(style = "color:#cfa85f;font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace", paste(n_sig, "/", n_total))),
+        tags$span(style = "color:#ffffff;font-size:16px;font-weight:600", "Significant (p<0.05)"),
+        tags$span(style = "color:#cfa85f;font-weight:800;font-size:18px;font-family:'JetBrains Mono',monospace", paste(n_sig, "/", n_total))),
       tags$div(style = row_style,
-        tags$span(style = "color:#ffffff;font-size:14px;font-weight:500", "R\u00b2"),
-        tags$span(style = "color:#ffffff;font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace",
+        tags$span(style = "color:#ffffff;font-size:16px;font-weight:600", "R\u00b2"),
+        tags$span(style = "color:#ffffff;font-weight:800;font-size:18px;font-family:'JetBrains Mono',monospace",
           sprintf("%.4f", s$r.squared))),
-      tags$div(style = "display:flex;justify-content:space-between;padding:10px 0",
-        tags$span(style = "color:#ffffff;font-size:14px;font-weight:500", "Residual SE"),
-        tags$span(style = "color:#ffffff;font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace",
+      tags$div(style = "display:flex;justify-content:space-between;padding:14px 0",
+        tags$span(style = "color:#ffffff;font-size:16px;font-weight:600", "Residual SE"),
+        tags$span(style = "color:#ffffff;font-weight:800;font-size:18px;font-family:'JetBrains Mono',monospace",
           sprintf("%.4f", s$sigma))))
   })
 
-  # Force background rendering for quick texts and tables only (keeps training instant)
+  # Pre-render only lightweight UI elements (NOT plots) to avoid training lag
   opts <- c("metric_r2", "metric_adjr2", "metric_se", "metric_fstat", "ttest_table_ui", "quick_summary_ui")
   for (id in opts) {
     outputOptions(output, id, suspendWhenHidden = FALSE)
