@@ -3,7 +3,6 @@
   <h1>SMART LINEAR REGRESSION 🔴💻</h1>
 </div>
 
-![Smart Linear Regression Banner](www/hero_banner.png)
 
 ## ⚡ Overview
 **SMART LINEAR REGRESSION** is a highly premium, state-of-the-art interactive data insight and regression modeling dashboard. Built with R Shiny, this application delivers a professional and aggressive aesthetic—combining sharp neon red accents, metallic gold typography, and a deep dark mode interface—while providing powerful statistical analysis capabilities.
