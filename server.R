@@ -16,6 +16,7 @@ server <- function(input, output, session) {
     tryCatch({
       df <- read.csv(input$file_upload$datapath,
         header = input$header, sep = input$sep, stringsAsFactors = FALSE)
+      names(df) <- toupper(names(df))
       rv$data <- df; rv$trained <- FALSE; rv$model <- NULL
       showNotification("Dataset loaded successfully!", type = "message", duration = 3)
     }, error = function(e) {
@@ -240,8 +241,9 @@ server <- function(input, output, session) {
 
   output$metric_r2 <- renderUI({
     req(rv$model_summary); r2 <- rv$model_summary$r.squared
-    quality <- if(r2 >= 0.8) "Excellent" else if(r2 >= 0.6) "Good" else if(r2 >= 0.3) "Fair" else "Poor"
-    metric_card_html("R\u00b2", sprintf("%.4f", r2), quality, "val-blue")
+    quality <- if(r2 == 1) "Perfect Fit" else if(r2 >= 0.8) "Good Fit" else if(r2 >= 0.5) "Fair Fit" else "Poor Fit"
+    desc <- if(r2 == 1) "Model explains 100% of the variance — exact fit."  else if(r2 >= 0.8) "Model explains most of the variance — strong predictive power." else if(r2 >= 0.5) "Model explains some variance — consider adding more features." else "Model explains little variance — weak predictive power."
+    metric_card_html("R\u00b2", sprintf("%.4f", r2), paste0(quality, " \u2014 ", desc), "val-blue")
   })
 
   output$metric_adjr2 <- renderUI({
@@ -351,8 +353,15 @@ server <- function(input, output, session) {
           sprintf("%.4f", s$sigma))))
   })
 
-  # Pre-render only lightweight UI elements (NOT plots) to avoid training lag
-  opts <- c("metric_r2", "metric_adjr2", "metric_se", "metric_fstat", "ttest_table_ui", "quick_summary_ui")
+  # Keep all outputs alive when switching tabs (prevents plots from disappearing)
+  opts <- c(
+    "metric_r2", "metric_adjr2", "metric_se", "metric_fstat",
+    "ttest_table_ui", "quick_summary_ui",
+    "scatter_plot", "actual_vs_pred", "residual_plot",
+    "residual_hist", "coef_importance_plot", "qq_plot",
+    "coef_table_ui", "model_type_display", "insights_panel",
+    "health_score_ui", "formula_display"
+  )
   for (id in opts) {
     outputOptions(output, id, suspendWhenHidden = FALSE)
   }

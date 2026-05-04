@@ -6,15 +6,8 @@ $(document).ready(function(){
   $('body').append(overlay);
   setTimeout(function(){ $('#appLoader').fadeOut(500, function(){ $(this).remove(); }); }, 1500);
 
-  // Shiny busy indicator
-  $(document).on('shiny:busy', function(){
-    if(!$('#busySpinner').length){
-      $('body').append('<div id="busySpinner" style="position:fixed;top:72px;right:32px;z-index:999;display:flex;align-items:center;gap:8px;background:rgba(30,33,48,.9);backdrop-filter:blur(10px);padding:10px 18px;border-radius:10px;border:1px solid rgba(99,132,255,.2);animation:fadeUp .3s ease">' +
-        '<div style="width:16px;height:16px;border:2px solid rgba(99,132,255,.2);border-top-color:#6384ff;border-radius:50%;animation:spin .7s linear infinite"></div>' +
-        '<span style="font-size:12px;color:#8b8fa3;font-weight:500">Processing...</span></div>');
-    }
-  });
-  $(document).on('shiny:idle', function(){ $('#busySpinner').fadeOut(300, function(){ $(this).remove(); }); });
+
+
 
   // Tab transition effect
   $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(){
